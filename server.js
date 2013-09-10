@@ -2,6 +2,11 @@ var express = require('express');
 var app = express();
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
+// simple logger
+app.use(function(req, res, next){
+  console.log('%s %s', req.method, req.url);
+  next();
+});
 
 app.configure(function() {
   app.use(express.static('public'));
@@ -18,6 +23,8 @@ app.configure(function() {
 // app.use(express.session({ secret: 'SECRET' }));
 // app.use(passport.initialize());
 // app.use(passport.session());
+
+
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -50,6 +57,7 @@ passport.use(new LocalStrategy(
 ));
 
 app.get('/hello.txt', function(req, res){
+  req.session.lastPage = '/awesome';
   res.send('Hello World.');
 });
 app.get('/private.txt', function(req, res){
@@ -64,5 +72,6 @@ app.post('/login',
     res.redirect('/private.txt');
 });
 
+
 app.listen(3000);
-console.log('Listening on port 3000');
+console.log('Listening on port 3000.');
